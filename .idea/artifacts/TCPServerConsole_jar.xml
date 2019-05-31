@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="TCPServerConsole:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/TCPServerConsole_jar</output-path>
+    <root id="archive" name="TCPServerConsole.jar">
+      <element id="module-output" name="TCPServerConsole" />
+    </root>
+  </artifact>
+</component>
