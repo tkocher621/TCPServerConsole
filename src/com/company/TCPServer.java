@@ -29,7 +29,7 @@ public class TCPServer extends Thread {
     {
         for (TCPClientListener client : clientList)
         {
-            if (client.clientName != name)
+            if (client.clientName != name && message != null && name != null)
             {
                 client.writer.println(name + ": " + message);
             }
