@@ -3,33 +3,30 @@ import java.io.*;
 import java.util.*;
 import java.net.ServerSocket;
 
-public class TCPServer extends Thread {
+public class TCPServer {
 
-    private int numClients;
-    private List<TCPClientListener> clientList = new ArrayList<>();
-    private ServerSocket serverSocket;
+    public List<TCPClientListener> clientList = new ArrayList<>();
+    public ServerSocket serverSocket;
 
     public void Init(int port) throws IOException
     {
         System.out.println("Server started on port localhost with port " + port + ". Listening for clients...");
-        numClients = 0;
         serverSocket = new ServerSocket(port);
+        new Thread(new TCPServerCommandListener(this)).start();
+        new Thread(new TCPConnectionListener(this)).start();
+        // start TCPConnectionListener
+    }
 
-        while (true) // REPLACE THIS
-        {
-            TCPClientListener client = new TCPClientListener(this, serverSocket.accept(), numClients);
-            clientList.add(client);
-            new Thread(client).start();
-            numClients++;
-        }
-
+    public void DisconnectClient(TCPClientListener client) throws IOException
+    {
+        client.socket.getInputStream().close();
     }
 
     public void SendToAllClients(String name, String message)
     {
         for (TCPClientListener client : clientList)
         {
-            if (client.clientName != name && message != null && name != null)
+            if (!client.clientName.equals(name) && message != null && name != null)
             {
                 client.writer.println(name + ": " + message);
             }

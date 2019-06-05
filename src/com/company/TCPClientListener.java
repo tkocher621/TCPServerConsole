@@ -7,9 +7,11 @@ public class TCPClientListener implements Runnable {
 
     public String clientName;
     public PrintWriter writer;
+    public int clientID;
+    public Socket socket;
+    public boolean isConnected;
 
     private TCPServer server;
-    private int clientID;
     private BufferedReader reader;
 
     public void run()
@@ -20,7 +22,8 @@ public class TCPClientListener implements Runnable {
         }
         catch (IOException x)
         {
-            System.out.println("Error: " + x.getMessage());
+            // Client disconnected error, no need to output this on server
+            //System.out.println("Error: " + x.getMessage());
         }
     }
 
@@ -28,15 +31,24 @@ public class TCPClientListener implements Runnable {
     {
         server = serv;
         clientID = id;
+        socket = clientSocket;
+        isConnected = true;
         writer = new PrintWriter(clientSocket.getOutputStream(), true);
         reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         clientName = reader.readLine();
         System.out.println("Client '" + clientName +"' (" + clientID + ") connected.");
     }
 
+    public void Disconnect() throws IOException
+    {
+        socket.getInputStream().close();
+        isConnected = false;
+        server.clientList.remove(this);
+    }
+
     public void ListenForMessage() throws IOException
     {
-        while (true)
+        while (isConnected)
         {
             String data = reader.readLine();
             if (data == null) break;
