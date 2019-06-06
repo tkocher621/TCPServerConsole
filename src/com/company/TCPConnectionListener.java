@@ -1,9 +1,6 @@
 package com.company;
 
-import com.sun.security.ntlm.Server;
-
 import java.io.IOException;
-import java.net.ServerSocket;
 
 public class TCPConnectionListener implements Runnable {
 
@@ -18,7 +15,10 @@ public class TCPConnectionListener implements Runnable {
         }
         catch (IOException x)
         {
-            System.out.println("Error: " + x.getMessage());
+            if (server.IsOnline)
+            {
+                System.out.println("<SYSTEM ERROR> " + x.getMessage());
+            }
         }
     }
 
@@ -30,7 +30,7 @@ public class TCPConnectionListener implements Runnable {
 
     private void ListenForClients() throws IOException
     {
-        while (true) // REPLACE THIS
+        while (server.IsOnline) // REPLACE THIS
         {
             TCPClientListener client = new TCPClientListener(server, server.serverSocket.accept(), totalConnections);
             server.clientList.add(client);

@@ -12,7 +12,7 @@ public class TCPClientListener implements Runnable {
     public boolean isConnected;
 
     private TCPServer server;
-    private BufferedReader reader;
+    public BufferedReader reader;
 
     public void run()
     {
@@ -36,7 +36,7 @@ public class TCPClientListener implements Runnable {
         writer = new PrintWriter(clientSocket.getOutputStream(), true);
         reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         clientName = reader.readLine();
-        System.out.println("Client '" + clientName +"' (" + clientID + ") connected.");
+        System.out.println("<SYSTEM> Client '" + clientName +"' (" + clientID + ") connected.");
     }
 
     public void Disconnect() throws IOException
@@ -46,7 +46,12 @@ public class TCPClientListener implements Runnable {
         server.clientList.remove(this);
     }
 
-    public void ListenForMessage() throws IOException
+    public void WriteMessage(String message)
+    {
+        writer.println(message);
+    }
+
+    private void ListenForMessage() throws IOException
     {
         while (isConnected)
         {
@@ -57,6 +62,6 @@ public class TCPClientListener implements Runnable {
             server.SendToAllClients(clientName, data);
         }
 
-        System.out.println("Client '" + clientName +"' (" + clientID + ") disconnected.");
+        System.out.println("<SYSTEM> Client '" + clientName +"' (" + clientID + ") disconnected.");
     }
 }

@@ -1,7 +1,7 @@
 package com.company;
 
+import java.io.IOException;
 import java.util.Scanner;
-import java.net.*;
 
 public class TCPServerCommandListener implements Runnable {
 
@@ -16,7 +16,7 @@ public class TCPServerCommandListener implements Runnable {
         }
         catch (Exception x)
         {
-            System.out.println("Error: " + x.getMessage());
+            System.out.println("<SYSTEM ERROR> " + x.getMessage());
         }
     }
 
@@ -41,17 +41,17 @@ public class TCPServerCommandListener implements Runnable {
             int id = Integer.parseInt(data);
             TCPClientListener client =  GetClient(id);
             client.Disconnect();
-            System.out.println("Disconnected client " + id + ".");
+            System.out.println("<SYSTEM> Disconnected client " + id + ".");
         }
         catch (Exception x)
         {
-            System.out.println("ERROR: Invalid UID");
+            System.out.println("<SYSTEM ERROR>: Invalid UID");
         }
     }
 
-    private void ListenForCommands()
+    private void ListenForCommands() throws IOException
     {
-        while (true) // while server is online
+        while (server.IsOnline) // while server is online
         {
             String data = scan.nextLine();
             if (!data.equals(""))
@@ -63,11 +63,11 @@ public class TCPServerCommandListener implements Runnable {
                 }
                 else if (data.startsWith("sd") || data.startsWith("shutdown"))
                 {
-                    // shutdown code
+                    server.ShutdownServer();
                 }
                 else
                 {
-                    System.out.println("Invalid command.");
+                    System.out.println("<SYSTEM ERROR> Invalid command.");
                 }
             }
         }
